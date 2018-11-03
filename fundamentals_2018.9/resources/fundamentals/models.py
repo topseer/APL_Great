@@ -5,7 +5,7 @@ import sklearn.linear_model as linear
 import random
 import pandas as pd
 
-from IPython.display import HTML
+from IPython.display import HTML, display_html
 
 def linear_regression(formula, data=None):
     if data is None:
@@ -17,6 +17,7 @@ def linear_regression(formula, data=None):
 
     y, X = patsy.dmatrices(formula, data, return_type="matrix")
     model = linear.LinearRegression(fit_intercept=False).fit( X, y)
+    result["model"] = model
 
     result["coefficients"] = model.coef_[ 0]
 
@@ -91,7 +92,8 @@ def simple_describe_lr(fit):
     <tr><td> $R^2$ </td><td> {r_squared} </td></tr>
     </table>
     """.format(**fit)
-    return HTML(results)
+    display_html(results, raw=True)
+#    return HTML(results)
 
 def simple_describe_lgr(fit):
     results = r"""
@@ -112,7 +114,8 @@ def simple_describe_lgr(fit):
     <tr><td> $R^2$ </td><td> {r_squared} </td></tr>
     </table>
     """.format(**fit)
-    return HTML(results)
+    display_html(results, raw=True)
+#    return HTML(results)
 
 def bootstrap_linear_regression( formula, data=None, samples=100):
     if data is None:
@@ -133,7 +136,7 @@ def bootstrap_linear_regression( formula, data=None, samples=100):
     bootstrap_results[ "n"] = n
     
     for i in range( samples):
-        sampling_indices = [ i for i in [random.randint(0, n - 1) for _ in range( 0, n)]]
+        sampling_indices = [ i for i in [np.random.randint(0, n - 1) for _ in range( 0, n)]]
         sampling = data.loc[ sampling_indices]
         
         results = linear_regression( formula, data=sampling)
@@ -155,6 +158,7 @@ def bootstrap_linear_regression( formula, data=None, samples=100):
     bootstrap_results[ "coefficients"] = result[ "coefficients"]
     bootstrap_results[ "sigma"] = result[ "sigma"]
     bootstrap_results[ "r_squared"] = result[ "r_squared"]
+    bootstrap_results["model"] = result["model"]
     return bootstrap_results
 
 def bootstrap_logistic_regression( formula, data=None, samples=100):
@@ -176,7 +180,7 @@ def bootstrap_logistic_regression( formula, data=None, samples=100):
     bootstrap_results[ "n"] = n
     
     for i in range( samples):
-        sampling_indices = [ i for i in [random.randint(0, n - 1) for _ in range( 0, n)]]
+        sampling_indices = [ i for i in [np.random.randint(0, n - 1) for _ in range( 0, n)]]
         sampling = data.loc[ sampling_indices]
         
         results = logistic_regression( formula, data=sampling)
@@ -198,6 +202,7 @@ def bootstrap_logistic_regression( formula, data=None, samples=100):
     bootstrap_results[ "coefficients"] = result[ "coefficients"]
     bootstrap_results[ "error"] = result[ "error"]
     bootstrap_results[ "r_squared"] = result[ "r_squared"]
+    bootstrap_results["model"] = result["model"]
     return bootstrap_results
 
 def describe_bootstrap_lr(fit, significant_digits=2):
@@ -236,7 +241,8 @@ def describe_bootstrap_lr(fit, significant_digits=2):
          str(sd) + r"f}, {2:." +
          str(sd) + r"f})</td></tr>").format(fit["r_squared"], r_bounds[0], r_bounds[1])
     results += r"</table>"
-    return HTML(results)
+    display_html(results, raw=True)
+#    return HTML(results)
 
 def describe_bootstrap_lgr(fit, significant_digits=2):
     sd = significant_digits
@@ -278,4 +284,29 @@ def describe_bootstrap_lgr(fit, significant_digits=2):
          str(sd) + r"f}, {2:." +
          str(sd) + r"f})</td></tr>").format(fit["r_squared"], r_bounds[0], r_bounds[1])
     results += r"</table>"
-    return HTML(results)
+    display_html(results, raw=True)
+#    return HTML(results)
+
+def strength(pr):
+    if 0 <= pr <= 0.33:
+        return "weak"
+    if 0.33 < pr <= 0.66:
+        return "mixed"
+    return "strong"
+
+# {"var1": "+", "var2": "-"}
+def evaluate_coefficient_predictions(predictions, result):
+    coefficients = result["resampled_coefficients"].columns
+    for coefficient in coefficients:
+        if coefficient == 'intercept':
+            continue
+        if predictions[coefficient] == '+':
+            pr = np.mean(result["resampled_coefficients"][coefficient] > 0)
+            print("{0} P(>0)={1:.3f} ({2})".format(coefficient, pr, strength(pr)))
+        else:
+            pr = np.mean(result["resampled_coefficients"][coefficient] < 0)
+            print("{0} P(<0)={1:.3f} ({2})".format(coefficient, pr, strength(pr)))
+
+def adjusted_r_squared(result):
+    adjustment = (result["n"] - 1)/(result["n"] - len(result["coefficients"]) - 1 - 1)
+    return 1 - (1 - result["r_squared"]) * adjustment
