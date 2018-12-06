@@ -1,0 +1,24 @@
+1. Avery clear structure and explanation. This should be something you'd be willing to submit to a boss or client. This should have an executive summary of what you did and the conclusions, followed by the work itself, clearly outlined and explained. All chart titles modified to the problem and the minimalist styling discussed in the Visualization section. If I see generic titles directly from the course, you will not get full credit.
+
+2. Only the relevant EDA (if you think that something needs a log transformation, show the EDA that uncovered it--if that's what did it).
+
+3. the entire model building process but at least relevant validation curves (don't just use them for polynomials...in fact, don't use them for polynomials at all...use them for regularization or other hyperparameters), learning curves, and generalization error. If it's a classification problem there should be a confusion matrix and a discussion of false positives versus false negatives.
+
+4. put the library code in a separate .py file and import it.
+
+5. submit as a ZIP file (and only a ZIP file).
+
+In regard to #1, I would hope not to see, this late in the semester, "I still don't know why I'm doing this but I'm going to do it and I hope it's right/get partial credit/hail Mary" ;)  And in this sense, this final problem encompasses the Muddy Point as well. If there is some concept you just don't understand why you're doing it, ask!
+
+Finally, you should submit your assignment to your group no later than Friday if you want to have your assignment peer reviewed. If someone submits their assignment you are obligated to review it and make comments by midday Sunday. If you don't submit by Friday, there is no obligation on anyone's part. The final assignment is due Sunday, the last day of class and the semester for this class. This final problem encompasses the Group Discussion as well.
+
+Deliverables
+
+1. ZIP file of a notebook JHED_ID.ipynb and library JHED_ID.py. You can use import JHED_ID as lib (or whatever so you don't have to keep using your JHED_ID through your assignment.
+2. Draft is due to your group discussion group if you want feedback/peer review by Friday, 12/7. You can ask after that, but you are not necessarily going to get it.
+3. Final is due to the Problem Set 6 item in Module 13 by Sunday, 12/9.
+4. Peer Review is required. If someone submits by Friday, you are required to review it by Sunday, midday. If you fail to review, you cannot get full credit on your own submission.
+5. Muddy Point - if you do have any remaining questions on the process and what you're doing, ask. Don't just hope you're going to get credit. If you submission isn't well documented, you won't get full credit.
+
+Cheers,
+Stephyn
